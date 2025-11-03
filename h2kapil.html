@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>KP SSC CGL — Practice App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0f1724; --card:#0b1220; --muted:#9aa6b2; --accent:#00b894; --glass: rgba(255,255,255,0.03);
+      --maxw:1100px; --radius:14px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial; margin:0; background:linear-gradient(180deg,#071023 0%, #081425 100%); color:#e6eef6; -webkit-font-smoothing:antialiased}
+    .container{max-width:var(--maxw); margin:32px auto; padding:24px}
+    header{display:flex;gap:16px;align-items:center;justify-content:space-between}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,#00b894,#0984e3);display:flex;align-items:center;justify-content:center;font-weight:800;color:#051018}
+    nav a{color:var(--muted); text-decoration:none; margin-left:18px}
+    .hero{display:grid;grid-template-columns:1fr 360px;gap:20px;margin-top:22px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-radius:var(--radius); padding:18px; box-shadow:0 6px 18px rgba(2,6,23,0.7)}
+    h1{margin:0;font-size:28px}
+    p.lead{color:var(--muted); margin-top:8px}
+    .cta{margin-top:14px}
+    button.btn{background:var(--accent); color:#02111a; border:0;padding:10px 14px;border-radius:10px;font-weight:600;cursor:pointer}
+    .small-btn{background:transparent;border:1px solid rgba(255,255,255,0.06); padding:8px 10px;border-radius:10px;color:var(--muted); cursor:pointer}
+    .sidebar .stat{display:flex;justify-content:space-between;padding:10px 8px;border-radius:10px;background:var(--glass);align-items:center;margin-bottom:10px}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+    .section{margin-top:20px}
+    .topics{display:flex;flex-wrap:wrap;gap:10px}
+    .topic{background:rgba(255,255,255,0.03);padding:8px 12px;border-radius:10px;color:var(--muted);cursor:pointer}
+    .quiz-area{margin-top:12px}
+    .question{font-weight:600;margin-bottom:8px}
+    .options{display:flex;flex-direction:column;gap:8px}
+    .option{background:rgba(255,255,255,0.02);padding:10px;border-radius:8px;cursor:pointer;border:1px solid rgba(255,255,255,0.02)}
+    .option.selected{outline:2px solid rgba(0,184,148,0.18)}
+    footer{margin-top:36px;color:var(--muted);font-size:13px;text-align:center}
+    /* Responsive */
+    @media (max-width:920px){
+      .hero{grid-template-columns:1fr}
+      .grid{grid-template-columns:repeat(2,1fr)}
+    }
+    @media (max-width:560px){
+      .grid{grid-template-columns:1fr}
+      nav a{display:none}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo">KP</div>
+        <div>
+          <div style="font-weight:700">KP SSC CGL</div>
+          <div style="font-size:12px;color:var(--muted)">Practice • Mock Tests • Past Papers</div>
+        </div>
+      </div>
+      <nav>
+        <a href="#home">Home</a>
+        <a href="#syllabus">Syllabus</a>
+        <a href="#tests">Mock Tests</a>
+        <a href="#papers">Past Papers</a>
+        <button class="small-btn" id="toggle-theme">Toggle Theme</button>
+      </nav>
+    </header>
+
+    <main class="hero">
+      <section>
+        <div class="card">
+          <h1>KP SSC CGL — Sharpen your edge</h1>
+          <p class="lead">A lightweight single-file practice web app with topic-wise quizzes, progress tracking, and past paper downloads. Built to be extensible — paste into an HTML file and open in browser.</p>
+          <div class="cta">
+            <button class="btn" id="start-quiz">Take a Quick Quiz</button>
+            <button class="small-btn" id="browse-papers">View Past Papers</button>
+          </div>
+
+          <div class="section">
+            <h3 style="margin:0 0 8px 0">Syllabus quick links</h3>
+            <div class="topics" id="topics-list"></div>
+          </div>
+        </div>
+
+        <div class="card section">
+          <h3 style="margin:0 0 12px 0">Quiz</h3>
+          <div class="quiz-area card" id="quiz-card" style="background:transparent;padding:0">
+            <div id="quiz-start" style="padding:12px">
+              <div style="color:var(--muted);font-size:14px">Pick a topic and press Start to begin a 5-question quiz.</div>
+              <select id="topic-select" style="margin-top:10px;padding:8px;border-radius:8px;background:transparent;color:inherit;border:1px solid rgba(255,255,255,0.06)">
+              </select>
+              <div style="margin-top:10px"><button class="btn" id="start-btn">Start</button></div>
+            </div>
+
+            <div id="quiz-play" style="display:none;padding:12px">
+              <div class="question" id="q-text">Question text</div>
+              <div class="options" id="q-options"></div>
+              <div style="margin-top:10px;display:flex;gap:8px;justify-content:space-between;align-items:center">
+                <div id="progress" style="color:var(--muted)"></div>
+                <div>
+                  <button class="small-btn" id="skip-btn">Skip</button>
+                  <button class="btn" id="next-btn">Next</button>
+                </div>
+              </div>
+            </div>
+
+            <div id="quiz-result" style="display:none;padding:12px"></div>
+          </div>
+        </div>
+
+      </section>
+
+      <aside class="sidebar" style="width:360px">
+        <div class="card">
+          <h3 style="margin:0 0 8px 0">Your Progress</h3>
+          <div class="stat"><div>Quizzes taken</div><div id="stat-quizzes">0</div></div>
+          <div class="stat"><div>Correct answers</div><div id="stat-correct">0</div></div>
+          <div class="stat"><div>Accuracy</div><div id="stat-acc">0%</div></div>
+
+          <div style="margin-top:12px">
+            <h4 style="margin:0 0 8px 0">Past Papers</h4>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <a class="small-btn" href="#" id="paper-2023">SSC CGL 2023 (sample)</a>
+              <a class="small-btn" href="#" id="paper-2022">SSC CGL 2022 (sample)</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <h4 style="margin:0 0 8px 0">Daily Tip</h4>
+          <p style="color:var(--muted);margin:0;font-size:14px">Practice accuracy over speed. Build concepts for Reasoning & Quant and read a short current affairs snippet daily.</p>
+        </div>
+      </aside>
+    </main>
+
+    <section class="container" style="max-width:var(--maxw)">
+      <div class="card">
+        <h3 style="margin:0 0 10px 0">Topic Bank</h3>
+        <div class="grid" id="topic-cards"></div>
+      </div>
+
+      <div class="card section" id="past-papers" style="margin-top:18px">
+        <h3 style="margin:0 0 10px 0">Past Papers & Resources</h3>
+        <p style="color:var(--muted);margin:0 0 12px 0">Sample links below are placeholders — replace with your PDFs or URLs.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <a class="small-btn" href="#">Download Paper PDF</a>
+          <a class="small-btn" href="#">Important Formulas (PDF)</a>
+          <a class="small-btn" href="#">Current Affairs Summary</a>
+        </div>
+      </div>
+
+    </section>
+
+    <footer>
+      Built with ❤ for KP SSC CGL • This is a static demo app — extend it with server APIs to add user accounts and synced progress.
+    </footer>
+  </div>
+
+  <script>
+    // --- Sample data: topics + questions ---
+    const DATA = {
+      topics: [
+        {key:'quant', title:'Quantitative Aptitude'},
+        {key:'reason', title:'General Intelligence & Reasoning'},
+        {key:'eng', title:'English Language'},
+        {key:'ga', title:'General Awareness'},
+        {key:'com', title:'Computer'},
+        {key:'eco', title:'Economics & Finance'}
+      ],
+      questions: {
+        quant: [
+          {q:'If 3x+5=20, x equals?', opts:['3','5','15','-5'], a:0},
+          {q:'Simplify: 12/3 + 4*2', opts:['10','14','20','8'], a:0},
+          {q:'LCM of 4 and 6', opts:['12','24','6','4'], a:0},
+          {q:'What is 15% of 200 ?', opts:['30','25','35','40'], a:0},
+          {q:'Square root of 144?', opts:['10','11','12','13'], a:2}
+        ],
+        reason: [
+          {q:'Find the next in sequence: 2,4,8,16,?', opts:['24','28','32','30'], a:2},
+          {q:'Odd one out: Dog, Cat, Cow, Car', opts:['Dog','Cat','Cow','Car'], a:3},
+          {q:'Mirror image of "b" looks like?', opts:['d','q','p','b'], a:0},
+          {q:'If ALL are B and B are C, then?', opts:['All C are A','All A are C','Some A are C','No relation'], a:1},
+          {q:'Choose next: A, C, F, J, ?', opts:['O','P','Q','R'], a:0}
+        ],
+        eng: [
+          {q:'Choose correct: He ____ to school every day.', opts:['go','goes','gone','going'], a:1},
+          {q:'Synonym of "Rapid"', opts:['Slow','Quick','Late','Bad'], a:1},
+          {q:'Fill: She is ____ engineer.', opts:['a','an','the','-'], a:1},
+          {q:'Opposite of "Victory"', opts:['Win','Defeat','Success','Triumph'], a:1},
+          {q:'Select correct spelling', opts:['Recieve','Receive','Receeve','Recive'], a:1}
+        ],
+        ga: [
+          {q:'Capital of India?', opts:['Mumbai','New Delhi','Kolkata','Chennai'], a:1},
+          {q:'National bird of India?', opts:['Peacock','Sparrow','Eagle','Parrot'], a:0},
+          {q:'Who is the current PM of India? (Placeholder)', opts:['A','B','C','D'], a:0},
+          {q:'Which planet is known as Red Planet?', opts:['Earth','Venus','Mars','Jupiter'], a:2},
+          {q:'Which gas is most abundant in air?', opts:['Oxygen','Nitrogen','Carbon Dioxide','Helium'], a:1}
+        ]
+      }
+    }
+
+    // DOM refs
+    const topicsList = document.getElementById('topics-list')
+    const topicSelect = document.getElementById('topic-select')
+    const topicCards = document.getElementById('topic-cards')
+    const startBtn = document.getElementById('start-btn')
+    const startQuizBtn = document.getElementById('start-quiz')
+
+    // Progress
+    const statQuizzes = document.getElementById('stat-quizzes')
+    const statCorrect = document.getElementById('stat-correct')
+    const statAcc = document.getElementById('stat-acc')
+
+    function initTopics(){
+      DATA.topics.forEach(t=>{
+        const span = document.createElement('div'); span.className='topic'; span.textContent = t.title; span.onclick = ()=>{ topicSelect.value = t.key }
+        topicsList.appendChild(span)
+
+        const card = document.createElement('div'); card.className='card'; card.style.padding='12px'; card.innerHTML = `<strong>${t.title}</strong><div style="color:var(--muted);font-size:13px;margin-top:8px">5 practice questions • timed mock</div><div style="margin-top:10px"><button class='small-btn' onclick="startFromCard('${t.key}')">Practice</button></div>`
+        topicCards.appendChild(card)
+
+        const opt = document.createElement('option'); opt.value=t.key; opt.textContent=t.title; topicSelect.appendChild(opt)
+      })
+    }
+
+    function startFromCard(k){ topicSelect.value = k; startQuiz() }
+
+    // --- Quiz Engine ---
+    let quiz = {topic:'quant', questions:[], idx:0, score:0, taken:0}
+    const qText = document.getElementById('q-text')
+    const qOptions = document.getElementById('q-options')
+    const quizStart = document.getElementById('quiz-start')
+    const quizPlay = document.getElementById('quiz-play')
+    const quizResult = document.getElementById('quiz-result')
+    const progress = document.getElementById('progress')
+    const nextBtn = document.getElementById('next-btn')
+    const skipBtn = document.getElementById('skip-btn')
+
+    function startQuiz(){ startBtn.click() }
+    startQuizBtn.onclick = ()=>{ document.getElementById('topic-select').focus(); window.scrollTo({top:250,behavior:'smooth'}) }
+
+    startBtn.addEventListener('click', startQuizHandler)
+
+    function startQuizHandler(){
+      const t = topicSelect.value || 'quant'
+      const pool = DATA.questions[t] || []
+      const shuffled = pool.slice().sort(()=>0.5-Math.random()).slice(0,5)
+      quiz = {topic:t, questions:shuffled, idx:0, score:0, taken:(getProgress().quizzes||0)}
+      showQuestion()
+      quizStart.style.display='none'; quizPlay.style.display='block'; quizResult.style.display='none'
+      updateProgressDisplay()
+    }
+
+    function showQuestion(){
+      const cur = quiz.questions[quiz.idx]
+      qText.textContent = `Q${quiz.idx+1}. ${cur.q}`
+      qOptions.innerHTML = ''
+      cur.opts.forEach((o,i)=>{
+        const d = document.createElement('div'); d.className='option'; d.textContent = o; d.onclick = ()=>selectOption(i,d)
+        qOptions.appendChild(d)
+      })
+      progress.textContent = `${quiz.idx+1}/${quiz.questions.length}`
+    }
+
+    let lastSelected = null
+    function selectOption(i,el){
+      Array.from(qOptions.children).forEach(c=>c.classList.remove('selected'))
+      el.classList.add('selected')
+      lastSelected = i
+    }
+
+    nextBtn.onclick = ()=>{
+      if(lastSelected===null){ alert('Please select an option or Skip.'); return }
+      const cur = quiz.questions[quiz.idx]
+      if(lastSelected === cur.a) quiz.score++
+      quiz.idx++
+      lastSelected = null
+      if(quiz.idx >= quiz.questions.length) finishQuiz()
+      else showQuestion()
+    }
+
+    skipBtn.onclick = ()=>{ lastSelected=null; quiz.idx++; if(quiz.idx>=quiz.questions.length) finishQuiz(); else showQuestion() }
+
+    function finishQuiz(){
+      quizPlay.style.display='none'
+      quizResult.style.display='block'
+      const correct = quiz.score
+      const total = quiz.questions.length
+      quizResult.innerHTML = `<div style="font-weight:700;font-size:18px">Result</div><div style="margin-top:8px;color:var(--muted)">You scored <strong>${correct}</strong> out of <strong>${total}</strong></div><div style="margin-top:12px"><button class='btn' id='done-btn'>Done</button></div>`
+      saveResult({taken:1, correct})
+      document.getElementById('done-btn').onclick = ()=>{ quizStart.style.display='block'; quizResult.style.display='none' }
+    }
+
+    // --- Simple localStorage progress ---
+    function getProgress(){ try{ return JSON.parse(localStorage.getItem('kp_ssc_progress')||'{}') }catch(e){return{}} }
+    function setProgress(obj){ localStorage.setItem('kp_ssc_progress', JSON.stringify(obj)) }
+    function saveResult({taken=0, correct=0}){
+      const p = getProgress()
+      p.quizzes = (p.quizzes||0) + taken
+      p.correct = (p.correct||0) + correct
+      p.accuracy = p.quizzes ? Math.round((p.correct / (p.quizzes*5))*100) : 0
+      setProgress(p)
+      updateProgressDisplay()
+    }
+    function updateProgressDisplay(){ const p=getProgress(); statQuizzes.textContent = p.quizzes||0; statCorrect.textContent = p.correct||0; statAcc.textContent = (p.accuracy||0)+'%'}
+
+    // --- Theme toggle (simple) ---
+    const toggle = document.getElementById('toggle-theme')
+    toggle.onclick = ()=>{
+      if(document.body.style.filter === 'invert(1)') document.body.style.filter = ''
+      else document.body.style.filter = 'invert(1) hue-rotate(180deg)'
+    }
+
+    // Init app
+    initTopics(); updateProgressDisplay();
+
+    // Expose startFromCard to global for inline onclick
+    window.startFromCard = startFromCard
+  </script>
+</body>
+</html>

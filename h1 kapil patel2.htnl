@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>But Hub Restoration Form</title>
+  
+</head>
+<body>
+
+  <form action="submit_restoration.php" method="post">
+    <h2>But Hub Restoration Form</h2>
+
+    <label for="name">Full Name:</label>
+    <input type="text" id="name" name="fullname" placeholder="Enter your full name" required>
+
+    <label for="email">Email Address:</label>
+    <input type="email" id="email" name="email" placeholder="Enter your valid email" required>
+
+    <label for="phone">Phone Number:</label>
+    <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
+
+    <label for="restoreType">Restoration Type:</label>
+    <select id="restoreType" name="restoreType" required>
+      <option value="">--Select Type--</option>
+      <option value="data">Data Restoration</option>
+      <option value="system">System Restoration</option>
+      <option value="account">Account Restoration</option>
+    </select>
+
+    <label for="details">Restoration Details:</label>
+    <textarea id="details" name="details" placeholder="Describe the issue or restoration details" required></textarea>
+
+    <button type="submit">Submit Request</button>
+  </form>
+
+</body>
+</html>
